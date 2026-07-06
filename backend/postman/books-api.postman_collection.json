@@ -1,0 +1,111 @@
+{
+  "info": {
+    "name": "BookShelf REST API",
+    "description": "Postman requests for the BookShelf Express REST API.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3001"
+    },
+    {
+      "key": "bookId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "GET all books",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/books"
+      }
+    },
+    {
+      "name": "GET finished books",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/books?status=finished"
+      }
+    },
+    {
+      "name": "POST create book",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Clean Code\",\n  \"author\": \"Robert C. Martin\",\n  \"genre\": \"Programming\",\n  \"status\": \"want\"\n}"
+        },
+        "url": "{{baseUrl}}/api/books"
+      }
+    },
+    {
+      "name": "POST validation error - missing title",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"author\": \"No Title Author\",\n  \"genre\": \"Testing\"\n}"
+        },
+        "url": "{{baseUrl}}/api/books"
+      }
+    },
+    {
+      "name": "PATCH update status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"finished\"\n}"
+        },
+        "url": "{{baseUrl}}/api/books/{{bookId}}"
+      }
+    },
+    {
+      "name": "PATCH update rating",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rating\": 5\n}"
+        },
+        "url": "{{baseUrl}}/api/books/{{bookId}}"
+      }
+    },
+    {
+      "name": "DELETE book",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/books/{{bookId}}"
+      }
+    }
+  ]
+}
