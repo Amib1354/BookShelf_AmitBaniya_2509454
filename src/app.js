@@ -31,6 +31,8 @@ app.use((err, req, res, next) => {
 
 
 
+app.get('/health', (req, res) => res.status(200).json({ ok: true }));
+
 app.get('/', (req, res) => {
   res.json({
     message: 'BookShelf REST API',
