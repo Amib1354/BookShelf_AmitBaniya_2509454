@@ -1,5 +1,8 @@
 import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import bookRoutes from './routes/bookRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 dotenv.config();
@@ -7,6 +10,16 @@ connectDB();
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || ['http://localhost:5173'].includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error('CORS origin not allowed'));
+  },
+  credentials: true
+}));
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
@@ -16,17 +29,7 @@ app.use((err, req, res, next) => {
   return next(err);
 });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
-  }
-
-  return next();
-});
 
 app.get('/', (req, res) => {
   res.json({
@@ -42,6 +45,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/books', bookRoutes);
+app.use('/auth', authRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found.' });

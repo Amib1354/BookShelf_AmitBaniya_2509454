@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url';
 import app from './src/app.js';
 import connectDB from './src/config/db.js';
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 const isMainModule = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 
 async function startServer() {

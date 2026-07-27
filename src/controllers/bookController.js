@@ -1,4 +1,4 @@
-import Book from '../../data/book.js';
+import Book from '../models/bookModel.js';
 import {
   VALID_STATUSES,
   allowedStatuses,
@@ -97,7 +97,7 @@ export async function updateBook(req, res) {
 
   try {
     const book = await Book.findByIdAndUpdate(req.params.id, updates, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true
     });
 

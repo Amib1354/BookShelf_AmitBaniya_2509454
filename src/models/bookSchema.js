@@ -40,7 +40,10 @@ const bookSchema = new mongoose.Schema(
     toJSON: {
       virtuals: true,
       transform: (_document, returnedObject) => {
-        delete returnedObject._id;
+        // Preserve MongoDB _id as id for frontend usage
+        returnedObject.id = returnedObject._id;
+        // Optionally keep _id as well
+        // delete returnedObject._id; // Commented out to retain _id if needed
         return returnedObject;
       }
     },
