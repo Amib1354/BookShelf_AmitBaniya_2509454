@@ -19,7 +19,7 @@ dist-ssr
 !.env.example
 
 # Sensitive source files
-src/config/db.js
+# (db.js is required for server execution)
 
 # Editor directories and files
 .vscode/*
