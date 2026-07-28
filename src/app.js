@@ -13,7 +13,15 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || ['http://localhost:5173'].includes(origin)) {
+    const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean);
+    if (
+      !origin || 
+      allowedOrigins.includes(origin) || 
+      origin.endsWith('.onrender.com') ||
+      origin.endsWith('.vercel.app') ||
+      origin.endsWith('.netlify.app') ||
+      origin.endsWith('.github.io')
+    ) {
       return callback(null, true);
     }
     callback(new Error('CORS origin not allowed'));
@@ -47,6 +55,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/books', bookRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/auth', authRoutes);
 
 app.use((req, res) => {
