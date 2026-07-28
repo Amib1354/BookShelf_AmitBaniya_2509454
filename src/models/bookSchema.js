@@ -3,6 +3,11 @@ import { allowedStatuses } from '../validators/bookValidator.js';
 
 const bookSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: false // set to false for backward compatibility with existing books, required for new books
+    },
     title: {
       type: String,
       required: true,

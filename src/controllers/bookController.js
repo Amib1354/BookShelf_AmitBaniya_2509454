@@ -23,7 +23,13 @@ export async function getBooks(req, res) {
   }
 
   try {
-    const books = await Book.find(status ? { status } : {}).sort({ createdAt: -1 });
+    const userId = req.user?.userId;
+    // Find books belonging to this user or legacy books without userId if no userId on book
+    const filter = status ? { status } : {};
+    if (userId) {
+      filter.$or = [{ userId }, { userId: { $exists: false } }, { userId: null }];
+    }
+    const books = await Book.find(filter).sort({ createdAt: -1 });
     return res.json(books);
   } catch (error) {
     return handleServerError(res, error);
@@ -55,6 +61,7 @@ export async function createBook(req, res) {
 
   try {
     const book = await Book.create({
+      userId: req.user?.userId,
       title,
       author,
       genre,
@@ -96,10 +103,14 @@ export async function updateBook(req, res) {
   }
 
   try {
-    const book = await Book.findByIdAndUpdate(req.params.id, updates, {
-      returnDocument: 'after',
-      runValidators: true
-    });
+    const book = await Book.findOneAndUpdate(
+      { _id: req.params.id },
+      updates,
+      {
+        returnDocument: 'after',
+        runValidators: true
+      }
+    );
 
     if (!book) {
       return res.status(404).json({ error: 'Book not found.' });
@@ -117,7 +128,7 @@ export async function updateBook(req, res) {
 
 export async function deleteBook(req, res) {
   try {
-    const deletedBook = await Book.findByIdAndDelete(req.params.id);
+    const deletedBook = await Book.findOneAndDelete({ _id: req.params.id });
 
     if (!deletedBook) {
       return res.status(404).json({ error: 'Book not found.' });
