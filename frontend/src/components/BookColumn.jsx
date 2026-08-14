@@ -31,17 +31,9 @@ export default function BookColumn({
       </div>
 
       <div className="space-y-3.5 flex-1 overflow-y-auto no-scrollbar">
-        {books.map((book) => (
-          <BookCard
-            key={book.id}
-            book={book}
-            shelves={shelves}
-            currentStatus={status}
-            onMoveBook={onMoveBook}
-            onDeleteBook={onDeleteBook}
-            onRateBook={onRateBook}
-          />
-        ))}
+         {books.map((book) => (
+            <BookCard key={book._id || book.id || book.title} book={book} shelves={shelves} currentStatus={status} onMoveBook={onMoveBook} onDeleteBook={onDeleteBook} onRateBook={onRateBook} />
+         ))}
 
         {books.length === 0 && (
           <div className="h-48 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center p-4 text-center">

@@ -1,0 +1,61 @@
+import mongoose from 'mongoose';
+import { allowedStatuses } from '../validators/bookValidator.js';
+
+const bookSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: false // set to false for backward compatibility with existing books, required for new books
+    },
+    title: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    author: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    genre: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    status: {
+      type: String,
+      enum: allowedStatuses(),
+      default: 'want'
+    },
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+      validate: {
+        validator: Number.isInteger,
+        message: 'Rating must be an integer from 0 to 5.'
+      }
+    }
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+    toJSON: {
+      virtuals: true,
+      transform: (_document, returnedObject) => {
+        // Preserve MongoDB _id as id for frontend usage
+        returnedObject.id = returnedObject._id;
+        // Optionally keep _id as well
+        // delete returnedObject._id; // Commented out to retain _id if needed
+        return returnedObject;
+      }
+    },
+    toObject: {
+      virtuals: true
+    }
+  }
+);
+
+export default bookSchema;

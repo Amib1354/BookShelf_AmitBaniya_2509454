@@ -37,7 +37,8 @@ export default function BookCard({
   onDeleteBook,
   onRateBook
 }) {
-  const { id, title, author, genre, status, rating } = book;
+  const { _id, id, title, author, genre, status, rating } = book;
+  const bookId = _id || id;
   const statusStyles = {
     want: 'bg-amber-50 text-amber-700 border-amber-200/60',
     reading: 'bg-blue-50 text-blue-700 border-blue-200/60',
@@ -63,7 +64,7 @@ export default function BookCard({
 
           {status === 'finished' && (
             <div className="rounded-md border border-amber-100 bg-amber-50/80 px-2 py-1 shadow-xs">
-              <StarRating rating={rating} onRate={(nextRating) => onRateBook(id, nextRating)} />
+              <StarRating rating={rating} onRate={(nextRating) => onRateBook(bookId, nextRating)} />
             </div>
           )}
         </div>
@@ -94,7 +95,7 @@ export default function BookCard({
             <button
               key={shelf.status}
               type="button"
-              onClick={() => onMoveBook(id, shelf.status)}
+              onClick={() => onMoveBook(bookId, shelf.status)}
               className="rounded-lg border border-slate-200 px-2 py-1.5 text-[10px] font-bold text-slate-500 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 transition-colors"
             >
               Move to {shelf.title}
@@ -102,7 +103,7 @@ export default function BookCard({
           ))}
           <button
             type="button"
-            onClick={() => onDeleteBook(id)}
+            onClick={() => onDeleteBook(bookId)}
             className="col-span-2 rounded-lg border border-red-100 px-2 py-1.5 text-[10px] font-bold text-red-500 hover:bg-red-50 transition-colors"
           >
             Delete

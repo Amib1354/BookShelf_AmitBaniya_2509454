@@ -9,9 +9,17 @@
   "scripts": {
     "start": "node app.js",
     "dev": "node app.js",
-    "test": "node --check app.js && node --check src/app.js && node --check src/routes/bookRoutes.js && node --check src/controllers/bookController.js && node --check src/models/bookModel.js && node --check src/validators/bookValidator.js && node --check src/data/books.js"
+    "seed": "node data/books.js",
+    "test": "node --check app.js && node --check src/app.js && node --check src/config/db.js && node --check src/routes/bookRoutes.js && node --check src/controllers/bookController.js && node --check src/controllers/authController.js && node --check src/routes/authRoutes.js && node --check src/models/bookSchema.js && node --check src/models/bookModel.js && node --check src/models/userModel.js && node --check src/middleware/authenticate.js && node --check src/validators/bookValidator.js && node --check data/book.js && node --check data/books.js"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.7.4",
+    "serverless-http": "^4.0.0"
   }
 }

@@ -1,9 +1,30 @@
 import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import bookRoutes from './routes/bookRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+  origin: (origin, callback) => {
+    const allowedOrigins = ['http://localhost:5173', 'http://localhost:3000', process.env.FRONTEND_URL].filter(Boolean);
+    if (
+      !origin || 
+      allowedOrigins.includes(origin) || 
+      origin.endsWith('.onrender.com') ||
+      origin.endsWith('.vercel.app') ||
+      origin.endsWith('.netlify.app') ||
+      origin.endsWith('.github.io')
+    ) {
+      return callback(null, true);
+    }
+    callback(new Error('CORS origin not allowed'));
+  },
+  credentials: true
+}));
 
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
@@ -13,17 +34,9 @@ app.use((err, req, res, next) => {
   return next(err);
 });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
-  }
 
-  return next();
-});
+app.get('/health', (req, res) => res.status(200).json({ ok: true }));
 
 app.get('/', (req, res) => {
   res.json({
@@ -39,6 +52,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/books', bookRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found.' });
