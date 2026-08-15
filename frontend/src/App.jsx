@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useNavigate, Link } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate, useLocation, Link } from 'react-router-dom';
 import { shelves } from '../data/book';
 import AddBookModal from './components/AddBookModal';
 import BookColumn from './components/BookColumn';
@@ -137,6 +137,7 @@ function Layout({ user, setUser, children }) {
 
 function ReadingTracker({ user }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [books, setBooks] = useState([]);
   const [shelfCounts, setShelfCounts] = useState({
     want: 0,
@@ -169,12 +170,9 @@ function ReadingTracker({ user }) {
     }, {});
   }, [books]);
 
-  const handleAddBook = (book) => {
-    addBook(book)
-      .then((res) => {
-        setBooks((prev) => [res.data, ...prev]);
-      })
-      .catch((err) => console.error('Add book failed:', err));
+  const handleAddBook = async (book) => {
+    const res = await addBook(book);
+    setBooks((prev) => [res.data, ...prev]);
   };
 
   const handleMoveBook = (bookId, nextStatus) => {
@@ -247,18 +245,12 @@ function ReadingTracker({ user }) {
         </div>
       </main>
 
-      <Routes>
-        <Route
-          path="/add"
-          element={
-            <AddBookModal
-              onClose={() => navigate('/')}
-              onAddBook={handleAddBook}
-            />
-          }
+      {location.pathname === '/add' && (
+        <AddBookModal
+          onClose={() => navigate('/')}
+          onAddBook={handleAddBook}
         />
-        <Route path="*" element={null} />
-      </Routes>
+      )}
     </div>
   );
 }

@@ -6,27 +6,38 @@ export default function AddBookModal({ onClose, onAddBook }) {
     author: '',
     genre: ''
   });
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
+    setError('');
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!form.title.trim() || !form.author.trim() || !form.genre.trim()) {
+      setError('Please fill in all fields.');
       return;
     }
 
-    onAddBook({
-      title: form.title.trim(),
-      author: form.author.trim(),
-      genre: form.genre.trim()
-    });
+    try {
+      setIsSubmitting(true);
+      await onAddBook({
+        title: form.title.trim(),
+        author: form.author.trim(),
+        genre: form.genre.trim()
+      });
 
-    setForm({ title: '', author: '', genre: '' });
-    onClose();
+      setForm({ title: '', author: '', genre: '' });
+      onClose();
+    } catch (submitError) {
+      setError(submitError.response?.data?.error || 'Could not add book. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -48,6 +59,12 @@ export default function AddBookModal({ onClose, onAddBook }) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">
+              {error}
+            </div>
+          )}
+
           <label className="block">
             <span className="text-xs font-semibold text-slate-600">Title</span>
             <input
@@ -91,9 +108,10 @@ export default function AddBookModal({ onClose, onAddBook }) {
             </button>
             <button
               type="submit"
-              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors"
+              disabled={isSubmitting}
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Add Book
+              {isSubmitting ? 'Adding...' : 'Add Book'}
             </button>
           </div>
         </form>
